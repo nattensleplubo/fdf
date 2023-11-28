@@ -15,6 +15,8 @@ FLAGS    := -Wall -Wextra -Werror
 ################################################################################
 
 SRCS        :=      srcs/main.c \
+                          srcs/gnl/get_next_line_utils_bonus.c \
+                          srcs/gnl/get_next_line_bonus.c \
                           
 OBJS        := $(SRCS:.c=.o)
 
