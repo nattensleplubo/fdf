@@ -1,94 +1,103 @@
-#  |  |  ___ \    \  |         |
-#  |  |     ) |  |\/ |   _  |  |  /   _ 
-# ___ __|  __/   |   |  (   |    <    __/ 
-#    _|  _____| _|  _| \__,_| _|\_\ \___|
-#                              by jcluzet
-################################################################################
-#                                     CONFIG                                   #
-################################################################################
 
-NAME        := fdf
-CC        := gcc
-FLAGS    := -Wall -Wextra -Werror 
-################################################################################
-#                                 PROGRAM'S SRCS                               #
-################################################################################
+# **************************************************************************** #
+# VARIABLES
 
-SRCS        :=      srcs/main.c \
-                          srcs/gnl/get_next_line_utils_bonus.c \
-                          srcs/gnl/get_next_line_bonus.c \
-                          
-OBJS        := $(SRCS:.c=.o)
+NAME				:= map_maker
+NAME_BONUS			:= cub3D_bonus
 
-.c.o:
-	${CC} ${FLAGS} -c $< -o ${<:.c=.o}
+CC					:= cc
+CFLAGS				:= -Wall -Wextra -Werror -I$(INC) 03 -I.. -g
 
-################################################################################
-#                                  Makefile  objs                              #
-################################################################################
+INC_DIR				:= include
+SRC_DIR				:= src
+BIN_DIR				:= bin
 
+#TODO: check this section for the miniLibX
+INC					:= /usr/include
+INCLIB				:= $(INC)/../lib
+LFLAGS				:= -L./minilibx-linux -lmlx -L$(INCLIB) -lXext -lX11 -lm
+#
 
-CLR_RMV		:= \033[0m
-RED		    := \033[1;31m
-GREEN		:= \033[1;32m
-YELLOW		:= \033[1;33m
-BLUE		:= \033[1;34m
-CYAN 		:= \033[1;36m
-RM		    := rm -f
+LIB_DIR				:= libft
+LIB					:= $(shell echo $(LIB_DIR) | cut -c 4-)
 
-UNAME		:=	$(shell uname)
+# **************************************************************************** #
+# COLORS
 
-ifeq ($(UNAME), Darwin)
-$(NAME): ${OBJS}
-			@echo "$(GREEN)Compilation ${CLR_RMV}of ${YELLOW}$(NAME) ${CLR_RMV}..."
-			@ $(MAKE) -C mlx all >/dev/null 2>&1
-			@ cp ./mlx/libmlx.a .
-			$(CC) $(CFLAGS) -g3 -Ofast -o $(NAME) -Imlx $(OBJS) -Lmlx -lmlx -lm -framework OpenGL -framework AppKit
-			@echo "$(GREEN)$(NAME) created[0m ✔️"
-endif
+GREEN				:= \033[0;92m
+BGREEN				:= \033[1;92m
+RED					:= \033[0;31m
+YELLOW				:= \033[0;93m
+BLUE				:= \033[0;94m
+PURPLE				:= \033[0;35m
+IPURPLE				:= \033[3;35m
+RED_BLINK			:= \033[31;5m
+GREEN_BLINK			:= \033[92;5m
+END_COLOR			:= \033[0;39m
 
-ifeq ($(UNAME), Linux)
-$(NAME): ${OBJS}
-			@echo "$(GREEN)Linux compilation ${CLR_RMV}of ${YELLOW}$(NAME) ${CLR_RMV}..."
-			@chmod 777 mlx_linux/configure
-			@ $(MAKE) -C mlx_linux all
-			$(CC) $(CFLAGS) -g3 -o $(NAME) $(OBJS) -Imlx_linux -Lmlx_linux -lmlx -lmlx_Linux -L/usr/lib -lXext -lX11 -lm
-			@echo "$(GREEN)$(NAME) created[0m ✔️"
-endif
+# **************************************************************************** #
+# SOURCES
 
-all:		${NAME}
+SRC_FILES		:= 	main \
+					menu \
+					graphics
+SRC_FILES_BONUS	:=	main
+OBJ_FILES		:=	$(addprefix $(BIN_DIR)/, $(addsuffix .o, $(SRC_FILES)))
+OBJ_FILES_BONUS	:=	$(addprefix $(BIN_DIR)/, $(addsuffix .o, $(SRC_FILES_BONUS)))
 
-ifeq ($(UNAME), Darwin)
+# **************************************************************************** #
+# RULES
+
+all: header $(NAME)
+
+bonus: $(NAME_BONUS)
+
+$(NAME): minilib $(OBJ_FILES)
+	@make --no-print-directory -C libft
+	@$(CC) -g -o $(NAME) $(OBJ_FILES) $(LFLAGS) -L $(LIB_DIR) -l $(LIB)
+	@echo "\n🧟 $(GREEN_BLINK)$(NAME) compiled$(END_COLOR) 🔫\n"
+
+$(BIN_DIR)/%.o: $(SRC_DIR)/%.c Makefile libft/src/*.c | $(BIN_DIR)
+	@$(CC) -MD -g -c $(CFLAGS) -I $(INC_DIR) -I $(LIB_DIR)/$(INC_DIR) -I./minilibx-linux $< -o $@
+	@printf "\r> $(BLUE)compiling $(notdir $<)$(END_COLOR)"
+
+$(NAME_BONUS): $(OBJ_FILES_BONUS)
+	@make --no-print-directory -C libft
+	@$(CC) -g -o $(NAME_BONUS) $(OBJ_FILES_BONUS) $(LFLAGS) -L $(LIB_DIR) -l $(LIB)
+	@echo "\n🧟 $(GREEN_BLINK)$(NAME_BONUS) compiled$(END_COLOR) 🔫\n"
+
+$(BIN_DIR):
+	@mkdir $(BIN_DIR)
+	@echo "$(IPURPLE)Created $(BIN_DIR)/ directory.$(END_COLOR)"
+
+minilib:
+	@echo "\ncompiling minilibX...\n"
+	@make --no-print-directory -s -C minilibx-linux
+	@echo "\n$(GREEN)minilibX compiled$(END_COLOR)\n"
+
 clean:
-			@ ${RM} *.o */*.o */*/*.o
-			@ rm -rf $(NAME).dSYM >/dev/null 2>&1
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)objs ✔️"
-endif
+	@rm -rf $(BIN_DIR)
+	@echo "$(YELLOW)$(NAME) all object & dependency files cleaned.$(END_COLOR)"
+	@make clean --no-print-directory -C libft
+	@make clean --no-print-directory -s -C minilibx-linux
 
-ifeq ($(UNAME), Linux)
-clean:
-			@ ${RM} *.o */*.o */*/*.o
-			@ rm -rf $(NAME).dSYM >/dev/null 2>&1
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)objs ✔️"
-endif
+fclean: clean
+	@rm -f $(NAME)
+	@echo "$(YELLOW)$(NAME) executable file cleaned.$(END_COLOR)"
+	@rm -f libft/libft.a
+	@echo "$(YELLOW)$(LIB_DIR) executable file cleaned as well!$(END_COLOR)"
 
+re: fclean space all
 
-ifeq ($(UNAME), Linux)
-fclean:		clean
-			@ ${RM} ${NAME}
-			@ $(MAKE) -C mlx_linux clean 
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)binary ✔️"
-endif
+header:
+	@echo "🕋 $(NAME)\n"
 
-ifeq ($(UNAME), Darwin)
-fclean:		clean
-			@ ${RM} ${NAME}
-			@ rm libmlx.a
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)binary ✔️"
-endif
+space:
+	@echo
 
-re:			fclean all
+-include $(OBJ_FILES:%.o=%.d)
 
-.PHONY:		all clean fclean re
+# **************************************************************************** #
+# PHONY
 
-
+.PHONY: all clean fclean re header space bonus
