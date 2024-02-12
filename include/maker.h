@@ -3,8 +3,8 @@
 # define MAKER_H
 
 //! DEFINES
-# define MENU_WIDTH 500
-# define MENU_HEIGHT 500
+# define WIN_WIDTH 500
+# define WIN_HEIGHT 900
 
 # define TILE_SIZE 30
 
@@ -64,14 +64,21 @@ typedef struct	s_data
 {
 	char	*map_name;
 	int		fd;
-	
-	char			**map;
-	int				map_size;
-	int				curs_coord[2];
+
 	struct s_mlx	*graphics;
+	struct s_fdf	*fdf;
 	
 	int				map_created;
 }	t_data;
+
+typedef struct s_fdf {
+	int **map;
+	int rows;
+	int cols;
+	int map_max_height;
+	int zoom;
+	
+}t_fdf;
 
 typedef struct	s_img
 {
@@ -94,11 +101,5 @@ typedef struct	s_mlx
 
 //! PROTOS
 t_data	*_data(void);
-int		print_menu(int keycode);
-void     ft_put_rectangle(t_img *img, int x0, int y0, int x1, int y1, int color);
-int		update_window(void);
-void	render_background(t_img *img, int color);
-int		exit_game();
-int		editor_key(int keycode);
 
 #endif

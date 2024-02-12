@@ -6,7 +6,7 @@
 /*   By: ngobert <ngobert@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 13:45:12 by mjallada          #+#    #+#             */
-/*   Updated: 2022/10/18 23:16:21 by ngobert          ###   ########.fr       */
+/*   Updated: 2024/02/12 09:41:49 by ngobert          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void			ft_putendl_fd(char *s, int fd);
 int				ft_putnbr_fd(int n, int fd);
 int				ft_tabsize(char **tab);
 void			ft_freetab(char ***tab);
+int				**ft_cpy_int_tab(int **tab, int rows, int cols);
 
 typedef struct s_list
 {

@@ -2,8 +2,8 @@
 # **************************************************************************** #
 # VARIABLES
 
-NAME				:= map_maker
-NAME_BONUS			:= cub3D_bonus
+NAME				:= fdf
+NAME_BONUS			:= fdf_bonus
 
 CC					:= cc
 CFLAGS				:= -Wall -Wextra -Werror -I$(INC) 03 -I.. -g
@@ -38,9 +38,7 @@ END_COLOR			:= \033[0;39m
 # **************************************************************************** #
 # SOURCES
 
-SRC_FILES		:= 	main \
-					menu \
-					graphics
+SRC_FILES		:= 	main
 SRC_FILES_BONUS	:=	main
 OBJ_FILES		:=	$(addprefix $(BIN_DIR)/, $(addsuffix .o, $(SRC_FILES)))
 OBJ_FILES_BONUS	:=	$(addprefix $(BIN_DIR)/, $(addsuffix .o, $(SRC_FILES_BONUS)))
@@ -90,7 +88,7 @@ fclean: clean
 re: fclean space all
 
 header:
-	@echo "🕋 $(NAME)\n"
+	@echo "$(NAME)\n"
 
 space:
 	@echo

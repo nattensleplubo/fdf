@@ -45,17 +45,17 @@ void     ft_put_rectangle(t_img *img, int x0, int y0, int x1, int y1, int color)
     }
 }
 
-int	update_window(void)
-{
-	char	*number;
+// int	update_window(void)
+// {
+// 	char	*number;
 
-	number = ft_itoa(_data()->map_size);
-	render_background(&_data()->graphics->menu_img, BLACK);
-	mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
-	if (_data()->map_created == 0)
-	{
-		mlx_string_put(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, (MENU_HEIGHT / 2) - 80, (MENU_WIDTH / 2) - 20, 0x00FFFFFF, "Choose the size of the map :");
-		mlx_string_put(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, MENU_HEIGHT / 2 , MENU_WIDTH / 2, 0x00FFFFFF, number);
-	}
-	return (0);
-}
+// 	number = ft_itoa(_data()->map_size);
+// 	render_background(&_data()->graphics->menu_img, BLACK);
+// 	mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
+// 	if (_data()->map_created == 0)
+// 	{
+// 		mlx_string_put(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, (WIN_HEIGHT / 2) - 80, (WIN_WIDTH / 2) - 20, 0x00FFFFFF, "Choose the size of the map :");
+// 		mlx_string_put(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, WIN_HEIGHT / 2 , WIN_WIDTH / 2, 0x00FFFFFF, number);
+// 	}
+// 	return (0);
+// }

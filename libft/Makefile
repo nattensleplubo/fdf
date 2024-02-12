@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mjallada <mjallada@student.42.fr>          +#+  +:+       +#+         #
+#    By: ngobert <ngobert@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 09:49:28 by mjallada          #+#    #+#              #
-#    Updated: 2022/09/29 16:32:06 by mjallada         ###   ########.fr        #
+#    Updated: 2024/02/12 09:51:18 by ngobert          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -86,6 +86,7 @@ SRC_FILES		:=	ft_isalpha \
 					ft_lstmap \
 					ft_tabsize \
 					ft_freetab \
+					ft_cpy_int_tab \
 					ft_printf_fd \
 					get_next_line \
 					get_next_line_utils
@@ -103,7 +104,7 @@ $(NAME): $(OBJ_FILES)
 	@echo "\n++ $(GREEN)$(NAME) compiled :)$(END_COLOR)"
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.c Makefile | $(BIN_DIR)
-	@$(CC) -MD -c $(CFLAGS) -I $(INC_DIR) $< -o $@
+	@$(CC) -g -MD -c $(CFLAGS) -I $(INC_DIR) $< -o $@
 	@printf "\r++ $(BLUE)compiling $(notdir $<)$(END_COLOR)"
 
 $(BIN_DIR):
