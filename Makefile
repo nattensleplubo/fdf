@@ -6,7 +6,8 @@ NAME				:= fdf
 NAME_BONUS			:= fdf_bonus
 
 CC					:= cc
-CFLAGS				:= -Wall -Wextra -Werror -I$(INC) 03 -I.. -g
+# CFLAGS				:= -Wall -Wextra -Werror -I$(INC) 03 -I.. -g
+CFLAGS				:= -I$(INC) 03 -I.. -g
 
 INC_DIR				:= include
 SRC_DIR				:= src

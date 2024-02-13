@@ -64,6 +64,7 @@
 typedef struct	s_data
 {
 	char	*map_name;
+	char	**map_char;
 	int		fd;
 
 	struct s_mlx	*graphics;
@@ -79,7 +80,10 @@ typedef struct s_fdf {
 	int cols;
 	int map_max_height;
 	int zoom;
-	
+
+	int	x_offset;
+	int	y_offset;
+
 	struct s_point	**p;
 }				t_fdf;
 
@@ -114,5 +118,6 @@ typedef struct	s_mlx
 t_data	*_data(void);
 void	project(void);
 void    ft_pixel_put(t_img *img, int x, int y, int color);
+void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2);
 
 #endif
