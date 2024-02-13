@@ -66,19 +66,47 @@ void draw_side_menu(t_mlx *mlx)
 // 	mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
 // }
 
+int **generate_fake_map() {
+	int	**map;
+	int	i;
+	int	j;
+
+	i = 0;
+	map = (int **)malloc(sizeof(int *) * 5);
+	if (!map)
+		return (NULL);
+	while (i < 5)
+	{
+		map[i] = (int *)malloc(sizeof(int) * 5);
+		j = 0;
+		while (j < 5)
+		{
+			map[i][j] = j + i;
+			j++;
+		}
+		i++;
+	}
+	return (map);
+}
+
+void printMatrix(int **matrix, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 int	main(int argc, char **argv)
 {
-	int matrix[3][3] = {
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}
-    };
 	if (argc != 2)
 		return (0);
 	_data()->map_name = argv[1];
 	init_menu();
     draw_side_menu(_data()->graphics);
-	int **test = ft_cpy_int_tab(matrix, 3, 3);
+	_data()->map = generate_fake_map();
+	printMatrix(_data()->map, 5, 5);
     mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
 	mlx_loop(_data()->graphics->mlx_ptr);
 }

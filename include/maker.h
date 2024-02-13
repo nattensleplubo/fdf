@@ -64,6 +64,7 @@ typedef struct	s_data
 {
 	char	*map_name;
 	int		fd;
+	int		**map;
 
 	struct s_mlx	*graphics;
 	struct s_fdf	*fdf;
