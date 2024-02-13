@@ -6,7 +6,7 @@
 /*   By: ngobert <ngobert@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 00:15:17 by ngobert           #+#    #+#             */
-/*   Updated: 2024/02/12 09:45:16 by ngobert          ###   ########.fr       */
+/*   Updated: 2024/02/13 14:54:37 by ngobert          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	**ft_cpy_int_tab(int **tab, int rows, int cols)
 			ret[i][j] = tab[i][j];
 			j++;
 		}
+		i++;
 	}
 	return (ret);
 }

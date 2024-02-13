@@ -34,6 +34,9 @@ void	init_menu(void)
 	_data()->graphics->menu_ptr = mlx_new_window(_data()->graphics->mlx_ptr, WIN_HEIGHT, WIN_WIDTH, _data()->map_name);
 	_data()->graphics->menu_img.image = mlx_new_image(_data()->graphics->mlx_ptr, WIN_HEIGHT, WIN_WIDTH);
 	_data()->graphics->menu_img.addr = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
+
+	_data()->fdf = malloc(sizeof(t_fdf));
+	_data()->fdf->zoom = 30;
 }
 
 void draw_side_menu(t_mlx *mlx)
@@ -67,6 +70,7 @@ void draw_side_menu(t_mlx *mlx)
 // }
 
 int **generate_fake_map() {
+	srand(time(NULL));
 	int	**map;
 	int	i;
 	int	j;
@@ -81,7 +85,8 @@ int **generate_fake_map() {
 		j = 0;
 		while (j < 5)
 		{
-			map[i][j] = j + i;
+			int randomNumber = rand() % 201;
+			map[i][j] = randomNumber;
 			j++;
 		}
 		i++;
@@ -98,6 +103,33 @@ void printMatrix(int **matrix, int rows, int cols) {
     }
 }
 
+void translate_matrix_to_point_struct(void)
+{
+	int i;
+	int x;
+	int y;
+	_data()->fdf->p = malloc(sizeof(t_point *) * 5);
+	i = 0;
+	while (i < 5)
+	{
+		_data()->fdf->p[i] = malloc(sizeof(t_point) * 5);
+		i++;
+	}
+	x = 0;
+	while (x < 5)
+	{
+		y = 0;
+		while (y < 5)
+		{
+			_data()->fdf->p[x][y].x = x;
+			_data()->fdf->p[x][y].y = y;
+			_data()->fdf->p[x][y].z = _data()->fdf->map[x][y];
+			y++;
+		}
+		x++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -105,8 +137,10 @@ int	main(int argc, char **argv)
 	_data()->map_name = argv[1];
 	init_menu();
     draw_side_menu(_data()->graphics);
-	_data()->map = generate_fake_map();
-	printMatrix(_data()->map, 5, 5);
+	_data()->fdf->map = generate_fake_map();
+	printMatrix(_data()->fdf->map, 5, 5);
+	translate_matrix_to_point_struct();
+	project();
     mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
 	mlx_loop(_data()->graphics->mlx_ptr);
 }

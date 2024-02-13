@@ -45,6 +45,7 @@
 # define PLA_2 0x3F1651
 
 //!LIBRARIES
+# include <time.h>
 # include <mlx.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -64,7 +65,6 @@ typedef struct	s_data
 {
 	char	*map_name;
 	int		fd;
-	int		**map;
 
 	struct s_mlx	*graphics;
 	struct s_fdf	*fdf;
@@ -74,12 +74,14 @@ typedef struct	s_data
 
 typedef struct s_fdf {
 	int **map;
+	int **projected_map;
 	int rows;
 	int cols;
 	int map_max_height;
 	int zoom;
 	
-}t_fdf;
+	struct s_point	**p;
+}				t_fdf;
 
 typedef struct	s_img
 {
@@ -89,6 +91,14 @@ typedef struct	s_img
 	int		line_length;
 	int		endian;
 }				t_img;
+
+typedef struct s_point
+{
+	int x;
+	int y;
+	int z;
+	int color;
+}				t_point;
 
 typedef struct	s_mlx
 {
@@ -102,5 +112,7 @@ typedef struct	s_mlx
 
 //! PROTOS
 t_data	*_data(void);
+void	project(void);
+void    ft_pixel_put(t_img *img, int x, int y, int color);
 
 #endif
