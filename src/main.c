@@ -8,34 +8,19 @@ int	exit_game()
 	exit (0);
 }
 
-int	move_around(int key, void *param)
-{
-	(void)param;
+// int key_release(int key, void *param)
+// {
+// 	// fprintf(stderr, "", key);
+// 	// if (key == KEY_W )
+// 	// 	_data()->w = 0;
+// 	// else if (key == KEY_S)
+// 	// 	_data()->s = 0;
+// 	// else if (key == KEY_A)
+// 	// 	_data()->a = 0;
+// 	// else if (key == KEY_D)
+// 	// 	_data()->d = 0;
+// }
 
-	printf("%d\n", key);
-	if (key == KEY_W)
-		_data()->fdf->y_offset = _data()->fdf->y_offset - 20;
-	else if (key == KEY_S)
-		_data()->fdf->y_offset = _data()->fdf->y_offset + 20;
-	else if (key == KEY_A)
-		_data()->fdf->x_offset = _data()->fdf->x_offset - 20;
-	else if (key == KEY_D)
-		_data()->fdf->x_offset = _data()->fdf->x_offset + 20;
-	else if (key == 61)
-	{
-		_data()->fdf->zoom = _data()->fdf->zoom + 1;
-	}
-	else if (key == 45)
-		_data()->fdf->zoom = _data()->fdf->zoom - 1;
-	else if (key == KEY_LEFT)
-		x_pos_rotation();
-	else if (key == KEY_Q)
-		exit(0);
-	// else if (key == KEY_RIGHT)
-	// 	x_neg_rotation();
-	
-	link_dots();
-}
 
 void	data_init(t_data *data)
 {
@@ -68,6 +53,15 @@ void	init_menu(void)
 	_data()->fdf->zoom = 20;
 	_data()->fdf->x_offset = 0;
 	_data()->fdf->y_offset = 0;
+
+	_data()->w = 0;
+	_data()->a = 0;
+	_data()->s = 0;
+	_data()->d = 0;
+	_data()->projected = 0;
+	_data()->rot_x = 0;
+	_data()->rot_y = 0;
+	_data()->rot_z = 0;
 }
 
 void draw_side_menu(t_mlx *mlx)
@@ -96,7 +90,8 @@ void	hooks_menu(void)
 {
 	// _data()->graphics->menu_img.image = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
 	mlx_hook(_data()->graphics->menu_ptr, 17, 0L, exit_game, NULL);
-	mlx_key_hook(_data()->graphics->menu_ptr, &move_around, NULL);
+	mlx_hook(_data()->graphics->menu_ptr, 2, 1L << 0, move_around, NULL);
+	// mlx_hook(_data()->graphics->menu_ptr, 3, 1L << 1, key_release, NULL);
 	// mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
 }
 
@@ -195,17 +190,81 @@ void	file_to_map(void)
 	_data()->fdf->rows = 0;
 
 	tmp_fd = open(_data()->map_name, O_RDONLY);
+	fprintf(stderr, "Calculating rows... ");
 	while (get_next_line(tmp_fd))
 		_data()->fdf->rows++;
 	close(tmp_fd);
+	fprintf(stderr, "Done!\n");
 	tmp_fd = open(_data()->map_name, O_RDONLY);
 	_data()->map_char = malloc(sizeof(char *) * _data()->fdf->rows);
 	_data()->fdf->map = malloc(sizeof(int *) * _data()->fdf->rows);
+	fprintf(stderr, "Reading map and putting in int matrix... ");
 	for (int i = 0; i < _data()->fdf->rows; i++)
 	{
 		_data()->map_char[i] = get_next_line(tmp_fd);
-		// printf("%s", _data()->map_char[i]);
 		string_to_int_tab(_data()->map_char[i], i);
+	}
+	fprintf(stderr, "Done !\n");
+}
+
+int	move_around(int key, void *param)
+{
+	(void)param;
+
+	fprintf(stderr, " %d ", key);
+	if (key == KEY_W)
+		_data()->w = _data()->w + 1;
+	else if (key == KEY_S)
+		_data()->s = _data()->s + 1;
+	else if (key == KEY_A)
+		_data()->a = _data()->a + 1;
+	else if (key == KEY_D)
+		_data()->d = _data()->d + 1;
+	else if (key == 61)
+	{
+		_data()->fdf->zoom = _data()->fdf->zoom + 1;
+	}
+	else if (key == 45)
+		_data()->fdf->zoom = _data()->fdf->zoom - 1;
+	else if (key == KEY_LEFT)
+		_data()->rot_x += 0.05;
+	else if (key == KEY_RIGHT)
+		_data()->rot_x -= 0.05;
+	else if (key == KEY_UP)
+		_data()->rot_y += 0.05;
+	else if (key == KEY_DOWN)
+		_data()->rot_y -= 0.05;
+	else if (key == KEY_Q)
+		_data()->rot_z += 0.05;
+	else if (key == KEY_E)
+		_data()->rot_z -= 0.05;
+	else if (key == KEY_ESC)
+		exit(0);
+	project();
+	link_dots();
+}
+
+int	update_window(void)
+{
+	if (_data()->w == 1)
+	{
+		_data()->fdf->y_offset = _data()->fdf->y_offset - 8;
+		_data()->w = 0;
+	}
+	if (_data()->s == 1)
+	{
+		_data()->fdf->y_offset = _data()->fdf->y_offset + 8;
+		_data()->s = 0;
+	}
+	if (_data()->a == 1)
+	{
+		_data()->fdf->x_offset = _data()->fdf->x_offset - 8;
+		_data()->a = 0;
+	}
+	if (_data()->d == 1)
+	{
+		_data()->fdf->x_offset = _data()->fdf->x_offset + 8;
+		_data()->d = 0;
 	}
 }
 
@@ -216,12 +275,24 @@ int	main(int argc, char **argv)
 	_data()->map_name = argv[1];
 	init_menu();
 	hooks_menu();
-	// _data()->fdf->map = generate_fake_map();
+
+	printf("File to map ...\n");
 	file_to_map();
-	printMatrix(_data()->fdf->map, _data()->fdf->rows, _data()->fdf->cols);
+	printf("File to map done\n");
+
+	printf("Matrix to point structure ...\n");
 	translate_matrix_to_point_struct();
+	printf("Matrix to point structure done\n");
+
+	printf("Projection ...\n");
 	project();
+	printf("Projection done\n");
+
+	printf("Dots linking ...\n");
 	link_dots();
+	printf("Dots linking done\n");
+
 	mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
+	mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
 	mlx_loop(_data()->graphics->mlx_ptr);
 }

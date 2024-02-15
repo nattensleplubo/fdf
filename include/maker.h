@@ -8,6 +8,7 @@
 
 # define KEY_ESC 65307
 # define KEY_Q 113
+# define KEY_E 101
 
 # define KEY_W 119
 # define KEY_A 97
@@ -42,6 +43,8 @@
 # define YMUR_2 0x3F1651
 # define PLA_2 0x3F1651
 
+# define FT_ABS(X) (((X) < 0) ? (-(X)) : (X))
+
 //!LIBRARIES
 # include <time.h>
 # include <mlx.h>
@@ -69,6 +72,17 @@ typedef struct	s_data
 	struct s_fdf	*fdf;
 	
 	int				map_created;
+
+	int	w;
+	int	a;
+	int	s;
+	int	d;
+
+	int projected;
+
+	double rot_x;
+	double rot_y;
+	double rot_z;
 }	t_data;
 
 typedef struct s_fdf {
@@ -119,5 +133,9 @@ void	project(void);
 void    ft_pixel_put(t_img *img, int x, int y, int color);
 void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2);
 void	link_dots(void);
+int	move_around(int key, void *param);
+void	x_pos_rotation(void);
+void	y_pos_rotation(void);
+void	z_pos_rotation(void);
 
 #endif

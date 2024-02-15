@@ -11,22 +11,50 @@ void printMatrixx(int **matrix, int rows, int cols) {
 
 void	x_pos_rotation(void)
 {
+	double angle = _data()->rot_x;
 	for (int i = 0; i < _data()->fdf->rows; i++)
 	{
 		for (int j = 0; j < _data()->fdf->cols; j++)
 		{
 			int x = _data()->fdf->p[i][j].x;
 			int y = _data()->fdf->p[i][j].y;
-			_data()->fdf->p[i][j].y = y * cos(0.1) + _data()->fdf->p[i][j].z * sin(0.1);
-			_data()->fdf->p[i][j].z = -y * sin(0.1) + _data()->fdf->p[i][j].z * cos(0.1);
+			_data()->fdf->p[i][j].y = y * cos(angle) + _data()->fdf->p[i][j].z * sin(angle);
+			_data()->fdf->p[i][j].z = -y * sin(angle) + _data()->fdf->p[i][j].z * cos(angle);
 		}
 	}
 }
 
-// void	x_neg_rotation(void)
-// {
+void	y_pos_rotation(void)
+{
+	double angle = _data()->rot_y;
+	for (int i = 0; i < _data()->fdf->rows; i++)
+	{
+		for (int j = 0; j < _data()->fdf->cols; j++)
+		{
+			int x = _data()->fdf->p[i][j].x;
+			int z = _data()->fdf->p[i][j].z;
+			_data()->fdf->p[i][j].x = x * cos(angle) + z * sin(angle);
+			_data()->fdf->p[i][j].z = -x * sin(angle) + z * cos(angle);
+		}
+	}
+}
 
-// }
+void	z_pos_rotation(void)
+{
+	double angle = _data()->rot_z;
+	for (int i = 0; i < _data()->fdf->rows; i++)
+	{
+		for (int j = 0; j < _data()->fdf->cols; j++)
+		{
+			int x = _data()->fdf->p[i][j].x;
+			int y = _data()->fdf->p[i][j].y;
+			int z = _data()->fdf->p[i][j].z;
+			_data()->fdf->p[i][j].x = x * cos(angle) - y * sin(angle);
+			_data()->fdf->p[i][j].y = x * sin(angle) + y * cos(angle);
+		}
+	}
+}
+
 
 void	draw_background(void)
 {
@@ -92,7 +120,18 @@ void	link_dots(void)
 
 void	project(void)
 {
-	_data()->fdf->projected_map = ft_cpy_int_tab(_data()->fdf->map, _data()->fdf->rows, _data()->fdf->cols);
+	for (int i = 0; i < _data()->fdf->rows; i++)
+	{
+		for (int j = 0; j < _data()->fdf->cols; j++)
+		{
+			_data()->fdf->p[i][j].x = _data()->fdf->og_p[i][j].x;
+			_data()->fdf->p[i][j].y = _data()->fdf->og_p[i][j].y;
+			_data()->fdf->p[i][j].z = _data()->fdf->og_p[i][j].z;
+		}
+	}
+	x_pos_rotation();
+	y_pos_rotation();
+	z_pos_rotation();
 	for (int i = 0; i < _data()->fdf->rows; i++) {
 		for (int j = 0; j < _data()->fdf->cols; j++) {
 			iso(&_data()->fdf->p[i][j].x, &_data()->fdf->p[i][j].y, _data()->fdf->p[i][j].z);
