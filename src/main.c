@@ -50,9 +50,10 @@ void	init_menu(void)
 	_data()->graphics->menu_img.addr = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
 
 	_data()->fdf = malloc(sizeof(t_fdf));
-	_data()->fdf->zoom = 20;
+	_data()->fdf->zoom = 12;
 	_data()->fdf->x_offset = 0;
 	_data()->fdf->y_offset = 0;
+	_data()->fdf->z_offset = 10;
 
 	_data()->w = 0;
 	_data()->a = 0;
@@ -134,6 +135,8 @@ void translate_matrix_to_point_struct(void)
 	int i;
 	int x;
 	int y;
+	int aqua = AQUA;
+	int blue = BLUE;
 	_data()->fdf->p = malloc(sizeof(t_point *) * _data()->fdf->rows);
 	_data()->fdf->og_p = malloc(sizeof(t_point *) * _data()->fdf->rows);
 	i = 0;
@@ -152,6 +155,16 @@ void translate_matrix_to_point_struct(void)
 			_data()->fdf->p[x][y].x = x;
 			_data()->fdf->p[x][y].y = y;
 			_data()->fdf->p[x][y].z = _data()->fdf->map[x][y];
+			if (_data()->fdf->p[x][y].z > 3)
+			{
+				_data()->fdf->p[x][y].color = aqua;
+				_data()->fdf->og_p[x][y].color = aqua;
+			}
+			else
+			{
+				_data()->fdf->p[x][y].color = blue;
+				_data()->fdf->og_p[x][y].color = blue;
+			}
 			_data()->fdf->og_p[x][y].x = x;
 			_data()->fdf->og_p[x][y].y = y;
 			_data()->fdf->og_p[x][y].z = _data()->fdf->map[x][y];
@@ -211,15 +224,15 @@ int	move_around(int key, void *param)
 {
 	(void)param;
 
-	fprintf(stderr, " %d ", key);
+	// fprintf(stderr, " %d ", key);
 	if (key == KEY_W)
-		_data()->w = _data()->w + 1;
+		_data()->fdf->y_offset += _data()->fdf->zoom;
 	else if (key == KEY_S)
-		_data()->s = _data()->s + 1;
+		_data()->fdf->y_offset -= _data()->fdf->zoom;
 	else if (key == KEY_A)
-		_data()->a = _data()->a + 1;
+		_data()->fdf->x_offset += _data()->fdf->zoom;
 	else if (key == KEY_D)
-		_data()->d = _data()->d + 1;
+		_data()->fdf->x_offset -= _data()->fdf->zoom;
 	else if (key == 61)
 	{
 		_data()->fdf->zoom = _data()->fdf->zoom + 1;
@@ -238,6 +251,10 @@ int	move_around(int key, void *param)
 		_data()->rot_z += 0.05;
 	else if (key == KEY_E)
 		_data()->rot_z -= 0.05;
+	else if (key == KEY_R)
+		_data()->fdf->z_offset -= 0.05;
+	else if (key == KEY_F)
+		_data()->fdf->z_offset += 0.05;
 	else if (key == KEY_ESC)
 		exit(0);
 	project();

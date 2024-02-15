@@ -20,10 +20,14 @@
 # define KEY_DOWN 65364
 # define KEY_RIGHT 65363
 
+# define KEY_R 114
+# define KEY_F 102
+
 # define RED 0xFF0000
 # define LGREY 0x808080
-# define GREY 0x505050
+# define GREY 0x1E1E1E
 # define BLACK 0x1000000
+# define BACKGROUND 0x222222
 # define WHITE 0xFFFFFF
 # define LIME 0x00FF00 
 # define GREEN 0x008000 
@@ -32,6 +36,12 @@
 # define BLUE 0x0000FF 
 # define AQUA 0x00FFFF
 # define PINK 0xFFC0CB
+
+# define COLOR_DISCO		0x9A1F6A
+# define COLOR_BRICK_RED	0xC2294E
+# define COLOR_FLAMINGO		0xEC4B27
+# define COLOR_JAFFA		0xEF8633
+# define COLOR_SAFFRON		0xF3AF3D
 
 # define SOL_1 0xF89F5B
 # define XMUR_1 0xE53F71
@@ -93,8 +103,9 @@ typedef struct s_fdf {
 	int map_max_height;
 	int zoom;
 
-	int	x_offset;
-	int	y_offset;
+	int		x_offset;
+	int		y_offset;
+	float	z_offset;
 
 	struct s_point	**p;
 	struct s_point	**og_p;
@@ -134,8 +145,8 @@ void    ft_pixel_put(t_img *img, int x, int y, int color);
 void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2);
 void	link_dots(void);
 int	move_around(int key, void *param);
-void	x_pos_rotation(void);
-void	y_pos_rotation(void);
-void	z_pos_rotation(void);
+void	x_pos_rotation(int i, int j);
+void	y_pos_rotation(int i, int j);
+void	z_pos_rotation(int i, int j);
 
 #endif
