@@ -3,10 +3,8 @@
 # define MAKER_H
 
 //! DEFINES
-# define WIN_WIDTH 500
-# define WIN_HEIGHT 900
-
-# define TILE_SIZE 30
+# define WIN_WIDTH 900
+# define WIN_HEIGHT 1600
 
 # define KEY_ESC 65307
 # define KEY_Q 113
@@ -85,6 +83,7 @@ typedef struct s_fdf {
 	int	y_offset;
 
 	struct s_point	**p;
+	struct s_point	**og_p;
 }				t_fdf;
 
 typedef struct	s_img
@@ -119,5 +118,6 @@ t_data	*_data(void);
 void	project(void);
 void    ft_pixel_put(t_img *img, int x, int y, int color);
 void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2);
+void	link_dots(void);
 
 #endif

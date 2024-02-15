@@ -8,6 +8,35 @@ int	exit_game()
 	exit (0);
 }
 
+int	move_around(int key, void *param)
+{
+	(void)param;
+
+	printf("%d\n", key);
+	if (key == KEY_W)
+		_data()->fdf->y_offset = _data()->fdf->y_offset - 20;
+	else if (key == KEY_S)
+		_data()->fdf->y_offset = _data()->fdf->y_offset + 20;
+	else if (key == KEY_A)
+		_data()->fdf->x_offset = _data()->fdf->x_offset - 20;
+	else if (key == KEY_D)
+		_data()->fdf->x_offset = _data()->fdf->x_offset + 20;
+	else if (key == 61)
+	{
+		_data()->fdf->zoom = _data()->fdf->zoom + 1;
+	}
+	else if (key == 45)
+		_data()->fdf->zoom = _data()->fdf->zoom - 1;
+	else if (key == KEY_LEFT)
+		x_pos_rotation();
+	else if (key == KEY_Q)
+		exit(0);
+	// else if (key == KEY_RIGHT)
+	// 	x_neg_rotation();
+	
+	link_dots();
+}
+
 void	data_init(t_data *data)
 {
 	data->graphics = malloc(sizeof(t_mlx));
@@ -37,8 +66,8 @@ void	init_menu(void)
 
 	_data()->fdf = malloc(sizeof(t_fdf));
 	_data()->fdf->zoom = 20;
-	_data()->fdf->x_offset = 500;
-	_data()->fdf->y_offset = 200;
+	_data()->fdf->x_offset = 0;
+	_data()->fdf->y_offset = 0;
 }
 
 void draw_side_menu(t_mlx *mlx)
@@ -63,13 +92,13 @@ void draw_side_menu(t_mlx *mlx)
 }
 
 
-// void	hooks_menu(void)
-// {
-// 	// _data()->graphics->menu_img.image = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
-// 	mlx_hook(_data()->graphics->menu_ptr, 17, 0L, exit_game, NULL);
-// 	mlx_key_hook(_data()->graphics->menu_ptr, &print_menu, NULL);
-// 	mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
-// }
+void	hooks_menu(void)
+{
+	// _data()->graphics->menu_img.image = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
+	mlx_hook(_data()->graphics->menu_ptr, 17, 0L, exit_game, NULL);
+	mlx_key_hook(_data()->graphics->menu_ptr, &move_around, NULL);
+	// mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
+}
 
 int **generate_fake_map() {
 	srand(time(NULL));
@@ -99,9 +128,9 @@ int **generate_fake_map() {
 void printMatrix(int **matrix, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            printf("%d ", matrix[i][j]);
+            // printf("%d ", matrix[i][j]);
         }
-        printf("\n");
+        // printf("\n");
     }
 }
 
@@ -111,10 +140,12 @@ void translate_matrix_to_point_struct(void)
 	int x;
 	int y;
 	_data()->fdf->p = malloc(sizeof(t_point *) * _data()->fdf->rows);
+	_data()->fdf->og_p = malloc(sizeof(t_point *) * _data()->fdf->rows);
 	i = 0;
 	while (i < _data()->fdf->rows)
 	{
 		_data()->fdf->p[i] = malloc(sizeof(t_point) * _data()->fdf->cols);
+		_data()->fdf->og_p[i] = malloc(sizeof(t_point) * _data()->fdf->cols);
 		i++;
 	}
 	x = 0;
@@ -126,6 +157,9 @@ void translate_matrix_to_point_struct(void)
 			_data()->fdf->p[x][y].x = x;
 			_data()->fdf->p[x][y].y = y;
 			_data()->fdf->p[x][y].z = _data()->fdf->map[x][y];
+			_data()->fdf->og_p[x][y].x = x;
+			_data()->fdf->og_p[x][y].y = y;
+			_data()->fdf->og_p[x][y].z = _data()->fdf->map[x][y];
 			y++;
 		}
 		x++;
@@ -136,6 +170,7 @@ void	string_to_int_tab(char *str, int x)
 {
 	char	**splitted_line;
 	int		i;
+	int		j;
 
 	splitted_line = ft_split(str, ' ');
 	i = 0;
@@ -143,11 +178,13 @@ void	string_to_int_tab(char *str, int x)
 		i++;
 	_data()->fdf->cols = i;
 	_data()->fdf->map[x] = malloc(sizeof(int) * i);
+	j = i - 1;
 	i = 0;
 	while (splitted_line[i])
 	{
-		printf("%s ", splitted_line[i]);
-		_data()->fdf->map[x][i] = ft_atoi(splitted_line[i]);
+		// printf("%s ", splitted_line[i]);
+		_data()->fdf->map[x][i] = ft_atoi(splitted_line[j]);
+		j--;
 		i++;
 	}
 }
@@ -178,12 +215,13 @@ int	main(int argc, char **argv)
 		return (0);
 	_data()->map_name = argv[1];
 	init_menu();
-    draw_side_menu(_data()->graphics);
+	hooks_menu();
 	// _data()->fdf->map = generate_fake_map();
 	file_to_map();
 	printMatrix(_data()->fdf->map, _data()->fdf->rows, _data()->fdf->cols);
 	translate_matrix_to_point_struct();
 	project();
-    mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
+	link_dots();
+	mlx_put_image_to_window(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, _data()->graphics->menu_img.image, 0, 0);
 	mlx_loop(_data()->graphics->mlx_ptr);
 }
