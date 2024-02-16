@@ -151,6 +151,7 @@ t_data	*_data(void);
 void	project(void);
 void    ft_pixel_put(t_img *img, int x, int y, int color);
 void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2);
+void	ft_color_line(t_img *img, t_point point, int x1, int y1, int x2, int y2);
 void	link_dots(void);
 int	move_around(int key, void *param);
 void	x_pos_rotation(int i, int j);

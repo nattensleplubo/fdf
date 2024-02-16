@@ -92,9 +92,11 @@ void	link_dots(void)
 		while (j < _data()->fdf->cols)
 		{
 			if (j != _data()->fdf->cols - 1)
-				ft_draw_line(&_data()->graphics->menu_img, COLOR_FLAMINGO, coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i][j + 1].x + _data()->fdf->x_offset, coord[i][j + 1].y + _data()->fdf->y_offset);
+				ft_color_line(&_data()->graphics->menu_img, _data()->fdf->og_p[i][j], coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i][j + 1].x + _data()->fdf->x_offset, coord[i][j + 1].y + _data()->fdf->y_offset);
+				// ft_draw_line(&_data()->graphics->menu_img, COLOR_FLAMINGO, coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i][j + 1].x + _data()->fdf->x_offset, coord[i][j + 1].y + _data()->fdf->y_offset);
 			if (i != _data()->fdf->rows - 1)
-				ft_draw_line(&_data()->graphics->menu_img, COLOR_FLAMINGO, coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i + 1][j].x + _data()->fdf->x_offset, coord[i + 1][j].y + _data()->fdf->y_offset);
+				ft_color_line(&_data()->graphics->menu_img, _data()->fdf->og_p[i][j], coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i + 1][j].x + _data()->fdf->x_offset, coord[i + 1][j].y + _data()->fdf->y_offset);
+				// ft_draw_line(&_data()->graphics->menu_img, COLOR_FLAMINGO, coord[i][j].x + _data()->fdf->x_offset, coord[i][j].y + _data()->fdf->y_offset, coord[i + 1][j].x + _data()->fdf->x_offset, coord[i + 1][j].y + _data()->fdf->y_offset);
 			j++;
 		}
 		i++;

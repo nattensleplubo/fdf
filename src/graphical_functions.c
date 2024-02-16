@@ -85,3 +85,51 @@ void	ft_draw_line(t_img *img, int color, int x1, int y1, int x2, int y2)
 		--p;
 	}
 }
+
+void	ft_color_line(t_img *img, t_point point, int x1, int y1, int x2, int y2)
+{
+	int color;
+
+	if (point.z <= 1)
+		color = BLUE;
+	if (point.z > 1 && point.z <= 4)
+		color = AQUA;
+	if (point.z > 3 && point.z <= 8)
+		color = COLOR_SAFFRON;
+	if (point.z > 8 && point.z <= 40)
+		color = GREEN;
+	if (point.z > 40 && point.z <= 175)
+		color = LGREY;
+	if (point.z > 175)
+		color = WHITE;
+
+	if (x1 > WIN_HEIGHT + 140 || x2 > WIN_HEIGHT + 150)
+		return ;
+	if (y1 > WIN_WIDTH + 150 || y2 > WIN_WIDTH + 150)
+		return ;
+	if (x1 < -150 || x2 < -150)
+		return ;
+	if (y1 < -150 || y2 < -150)
+		return ;
+	
+	double	dist[2];
+	double	pos[2];
+	int		p;
+
+	dist[0] = x2 - x1;
+	dist[1] = y2 - y1;
+	p = sqrt((dist[0] * dist[0]) + (dist[1] * dist[1]));
+	dist[0] /= p;
+	dist[1] /= p;
+	pos[0] = x1;
+	pos[1] = y1;
+
+	while (p)
+	{
+		ft_pixel_put(img, pos[0], pos[1], color);
+		pos[0] += dist[0];
+		pos[1] += dist[1];
+		--p;
+	}
+}
+
