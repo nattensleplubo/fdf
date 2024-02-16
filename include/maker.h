@@ -107,6 +107,14 @@ typedef struct s_fdf {
 	int		y_offset;
 	float	z_offset;
 
+	int mouse_pressed;
+	int mouse_r_pressed;
+	int	mouse_x;
+	int	mouse_y;
+	int mouse_previous_x;
+	int mouse_previous_y;
+	int mouse_mute;
+
 	struct s_point	**p;
 	struct s_point	**og_p;
 }				t_fdf;

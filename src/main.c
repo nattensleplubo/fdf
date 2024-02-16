@@ -8,19 +8,72 @@ int	exit_game()
 	exit (0);
 }
 
-// int key_release(int key, void *param)
-// {
-// 	// fprintf(stderr, "", key);
-// 	// if (key == KEY_W )
-// 	// 	_data()->w = 0;
-// 	// else if (key == KEY_S)
-// 	// 	_data()->s = 0;
-// 	// else if (key == KEY_A)
-// 	// 	_data()->a = 0;
-// 	// else if (key == KEY_D)
-// 	// 	_data()->d = 0;
-// }
+int	mouse_press(int button, int x, int y, void *param)
+{
+	(void)x;
+	(void)y;
+	(void)param;
+	fprintf(stderr, " %d ", button);
+	if (button == 4)
+		_data()->fdf->zoom++;
+	if (button == 5)
+		_data()->fdf->zoom--;
+	if (button == 1 || button == 3)
+	{
+		if (button == 1 && _data()->fdf->mouse_pressed == 0 && _data()->fdf->mouse_r_pressed == 0)
+		{
+			mlx_mouse_hide(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr);
+			_data()->fdf->mouse_pressed = 1;
+		}
+		else if (button == 1 && _data()->fdf->mouse_pressed == 1 && _data()->fdf->mouse_r_pressed == 0)
+		{
+			mlx_mouse_show(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr);
+			_data()->fdf->mouse_pressed = 0;
+		}
+		if (button == 3 && _data()->fdf->mouse_r_pressed == 0 && _data()->fdf->mouse_pressed == 0)
+		{
+			mlx_mouse_hide(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr);
+			_data()->fdf->mouse_r_pressed = 1;
+		}
+		else if (button == 3 && _data()->fdf->mouse_r_pressed == 1 && _data()->fdf->mouse_pressed == 0)
+		{
+			mlx_mouse_show(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr);
+			_data()->fdf->mouse_r_pressed = 0;
+		}
+		mlx_mouse_move(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, WIN_HEIGHT / 2, WIN_WIDTH / 2);
+	}
+	return (1);
+}
 
+int	mouse_release(int button, int x, int y, void *param)
+{
+	printf("coucou\n");
+	(void)x;
+	(void)y;
+	(void)param;
+	(void)button;
+	_data()->fdf->mouse_pressed = 0;
+	return (1);
+}
+
+int	mouse_move(int x, int y, void *param)
+{
+	(void)param;
+
+	_data()->fdf->mouse_previous_x = _data()->fdf->mouse_x;
+	_data()->fdf->mouse_previous_y = _data()->fdf->mouse_y;
+	_data()->fdf->mouse_x = x;
+	_data()->fdf->mouse_y = y;
+
+
+	if (_data()->fdf->mouse_pressed == 1)
+	{
+		_data()->rot_x += (x - _data()->fdf->mouse_previous_x) * 0.002;
+		_data()->rot_y += (y - _data()->fdf->mouse_previous_y) * 0.002;
+		project();
+		link_dots();
+	}
+}
 
 void	data_init(t_data *data)
 {
@@ -53,7 +106,7 @@ void	init_menu(void)
 	_data()->fdf->zoom = 12;
 	_data()->fdf->x_offset = 0;
 	_data()->fdf->y_offset = 0;
-	_data()->fdf->z_offset = 10;
+	_data()->fdf->z_offset = 1;
 
 	_data()->w = 0;
 	_data()->a = 0;
@@ -63,6 +116,11 @@ void	init_menu(void)
 	_data()->rot_x = 0;
 	_data()->rot_y = 0;
 	_data()->rot_z = 0;
+	_data()->fdf->mouse_pressed = 0;
+	_data()->fdf->mouse_r_pressed = 0;
+	_data()->fdf->mouse_x = 0;
+	_data()->fdf->mouse_y = 0;
+	_data()->fdf->mouse_mute = 0;
 }
 
 void draw_side_menu(t_mlx *mlx)
@@ -92,6 +150,11 @@ void	hooks_menu(void)
 	// _data()->graphics->menu_img.image = mlx_get_data_addr(_data()->graphics->menu_img.image, &_data()->graphics->menu_img.bpp, &_data()->graphics->menu_img.line_length, &_data()->graphics->menu_img.endian);
 	mlx_hook(_data()->graphics->menu_ptr, 17, 0L, exit_game, NULL);
 	mlx_hook(_data()->graphics->menu_ptr, 2, 1L << 0, move_around, NULL);
+	mlx_mouse_hook(_data()->graphics->menu_ptr, &mouse_press, NULL);
+	// mlx_hook(_data()->graphics->menu_ptr, 5, 1 << 5, mouse_release, NULL);
+	// mlx_hook(_data()->graphics->menu_ptr, 6, 0L, mouse_move, NULL);
+	// mlx_mouse_move(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr,)
+
 	// mlx_hook(_data()->graphics->menu_ptr, 3, 1L << 1, key_release, NULL);
 	// mlx_loop_hook(_data()->graphics->mlx_ptr, &update_window, NULL);
 }
@@ -224,7 +287,6 @@ int	move_around(int key, void *param)
 {
 	(void)param;
 
-	// fprintf(stderr, " %d ", key);
 	if (key == KEY_W)
 		_data()->fdf->y_offset += _data()->fdf->zoom;
 	else if (key == KEY_S)
@@ -252,9 +314,9 @@ int	move_around(int key, void *param)
 	else if (key == KEY_E)
 		_data()->rot_z -= 0.05;
 	else if (key == KEY_R)
-		_data()->fdf->z_offset -= 0.05;
+		_data()->fdf->z_offset -= 0.02;
 	else if (key == KEY_F)
-		_data()->fdf->z_offset += 0.05;
+		_data()->fdf->z_offset += 0.02;
 	else if (key == KEY_ESC)
 		exit(0);
 	project();
@@ -265,24 +327,58 @@ int	update_window(void)
 {
 	if (_data()->w == 1)
 	{
-		_data()->fdf->y_offset = _data()->fdf->y_offset - 8;
+		_data()->fdf->y_offset = _data()->fdf->y_offset - 6;
 		_data()->w = 0;
 	}
 	if (_data()->s == 1)
 	{
-		_data()->fdf->y_offset = _data()->fdf->y_offset + 8;
+		_data()->fdf->y_offset = _data()->fdf->y_offset + 6;
 		_data()->s = 0;
 	}
 	if (_data()->a == 1)
 	{
-		_data()->fdf->x_offset = _data()->fdf->x_offset - 8;
+		_data()->fdf->x_offset = _data()->fdf->x_offset - 6;
 		_data()->a = 0;
 	}
 	if (_data()->d == 1)
 	{
-		_data()->fdf->x_offset = _data()->fdf->x_offset + 8;
+		_data()->fdf->x_offset = _data()->fdf->x_offset + 6;
 		_data()->d = 0;
 	}
+
+
+	if (_data()->fdf->mouse_pressed == 1 || _data()->fdf->mouse_r_pressed == 1)
+	{
+		int x;
+		int y;
+		mlx_mouse_get_pos(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, &x, &y);
+		if (x != WIN_HEIGHT / 2 || y != WIN_WIDTH / 2)
+		{
+			if (_data()->fdf->mouse_pressed == 1)
+			{
+				if (_data()->fdf->mouse_previous_x != x && !_data()->fdf->mouse_r_pressed)
+				{
+					_data()->fdf->mouse_previous_x = WIN_HEIGHT / 2;
+					_data()->fdf->mouse_x = x;
+					_data()->rot_x += (x - _data()->fdf->mouse_previous_x) * 0.002;
+				}
+				if (_data()->fdf->mouse_previous_y != y && !_data()->fdf->mouse_r_pressed)
+				{
+					_data()->fdf->mouse_previous_y = WIN_WIDTH / 2;
+					_data()->fdf->mouse_y = y;
+					_data()->rot_y += (y - _data()->fdf->mouse_previous_y) * 0.002;
+				}
+			}
+			else if (_data()->fdf->mouse_r_pressed == 1)
+			{
+				_data()->fdf->x_offset += x - WIN_HEIGHT / 2;
+				_data()->fdf->y_offset += y - WIN_WIDTH / 2;
+			}
+			mlx_mouse_move(_data()->graphics->mlx_ptr, _data()->graphics->menu_ptr, WIN_HEIGHT / 2, WIN_WIDTH / 2);
+		}
+	}
+	project();
+	link_dots();
 }
 
 int	main(int argc, char **argv)
